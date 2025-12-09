@@ -2,7 +2,6 @@ services:
   searxng:
     image: searxng/searxng
     container_name: searxng
-    user: "${UID}:${GID}"
     volumes:
       - config:/etc/searxng/
       - data:/var/cache/searxng/
