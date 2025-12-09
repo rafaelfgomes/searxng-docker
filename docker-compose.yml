@@ -1,0 +1,26 @@
+services:
+  searxng:
+    image: searxng/searxng
+    container_name: searxng
+    user: "${UID}:${GID}"
+    volumes:
+      - config:/etc/searxng/
+      - data:/var/cache/searxng/
+    restart: unless-stopped
+    networks:
+      net:
+        ipv4_address: ${APP_IP}
+    dns:
+      - ${DNS_IP_1}
+      - ${DNS_IP_2:-9.9.9.9}
+
+volumes:
+  config:
+    name: searxng-config
+  data:
+    name: searxng-data
+
+networks:
+  net:
+    external: true
+    name: webapps-network
