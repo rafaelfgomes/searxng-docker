@@ -3,23 +3,26 @@ services:
     image: searxng/searxng
     container_name: searxng
     volumes:
-      - config:/etc/searxng/
-      - data:/var/cache/searxng/
+      - ${SEARXNG_CONFIG_FOLDER:-./config}:/etc/searxng
+      - ${SEARXNG_DATA_FOLDER:-./data}:/var/cache/searxng
     restart: unless-stopped
     networks:
       net:
-        ipv4_address: ${APP_IP}
-    dns:
-      - ${DNS_IP_1}
-      - ${DNS_IP_2:-9.9.9.9}
 
-volumes:
-  config:
-    name: searxng-config
-  data:
-    name: searxng-data
+  redis:
+    container_name: redis
+    image: docker.io/valkey/valkey:8-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: unless-stopped
+    networks:
+      net:
+    volumes:
+      - ${SEARXNG_REDIS_DATA_FOLDER:-./redis-data}:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
 
-networks:
-  net:
-    external: true
-    name: webapps-network
+include:
+  - path: ${NETWORK_CONFIG_FILE}
