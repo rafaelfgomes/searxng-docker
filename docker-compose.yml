@@ -5,8 +5,6 @@ services:
     volumes:
       - ${SEARXNG_CONFIG_FOLDER:-./config}:/etc/searxng
       - ${SEARXNG_DATA_FOLDER:-./data}:/var/cache/searxng
-    ports:
-      - ${SEARXNG_PORT:-8080}:8080
     restart: unless-stopped
     networks:
       net:
