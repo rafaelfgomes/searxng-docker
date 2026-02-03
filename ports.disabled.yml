@@ -1,3 +1,0 @@
-services:
-  searxng:
-    ports: {}
