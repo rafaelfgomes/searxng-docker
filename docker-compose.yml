@@ -1,34 +1,35 @@
 services:
-  searxng:
-    image: searxng/searxng
-    container_name: searxng
+  valkey:
+    image: docker.io/valkey/valkey:9-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    container_name: searxng-valkey
     volumes:
-      - ${SEARXNG_CONFIG_FOLDER:-./config}:/etc/searxng
-      - ${SEARXNG_DATA_FOLDER:-./data}:/var/cache/searxng
+      - ${SEARXNG_VALKEY_DATA_FOLDER:-./searxng-valkey_data}:/data
     restart: unless-stopped
     networks:
       external:
-        ipv4_address: ${SEARXNG_IP_ADDRESS}
-      local:
+        ipv4_address: ${SEARXNG_VALKEY_IP_ADDRESS}
 
-  redis:
-    container_name: redis
-    image: docker.io/valkey/valkey:8-alpine
-    command: valkey-server --save 30 1 --loglevel warning
-    restart: unless-stopped
-    networks:
-      local:
+  searxng:
+    image: searxng/searxng
+    container_name: searxng-app
     volumes:
-      - ${SEARXNG_REDIS_DATA_FOLDER:-./redis-data}:/data
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1m"
-        max-file: "1"
+      - ${SEARXNG_CONFIG_FOLDER:-./config}:/etc/searxng
+      - ${SEARXNG_DATA_FOLDER:-./data}:/var/cache/searxng
+    environment:
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-false}
+      - SEARXNG_VALKEY_URL=${SEARXNG_VALKEY_URL:-false}
+      - SEARXNG_SECRET=${SEARXNG_SECRET}
+      - SEARXNG_LIMITER=${SEARXNG_LIMITER:-false}
+      - SEARXNG_IMAGE_PROXY=${SEARXNG_IMAGE_PROXY:-false}
+    restart: unless-stopped
+    depends_on:
+      - valkey
+    networks:
+      external:
+        ipv4_address: ${SEARXNG_IP_ADDRESS}
 
 networks:
   external:
     external: true
     name: ${EXTERNAL_NETWORK_NAME}
-  local:
-    name: searxng-internal-network
