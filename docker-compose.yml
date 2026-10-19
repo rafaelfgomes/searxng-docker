@@ -25,7 +25,7 @@ services:
     image: searxng/searxng
     container_name: searxng-app
     volumes:
-      - ./config:/etc/searxng
+      - ./configs:/etc/searxng
       - ${SEARXNG_CACHE_FOLDER:-./data}:/var/cache/searxng
     environment:
       - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-false}
