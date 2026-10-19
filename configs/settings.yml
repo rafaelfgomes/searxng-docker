@@ -5,7 +5,7 @@ server:
   base_url: ""
   image_proxy: ""
 
-redis:
+valkey:
   url: valkey://cache:6379/0
 
 limiter:
