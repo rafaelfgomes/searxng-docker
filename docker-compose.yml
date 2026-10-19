@@ -29,7 +29,7 @@ services:
       local:
         ipv4_address: 172.${SUBNET_NUMBER:-20}.0.2
       external:
-        ipv4_address: ${SEARXNG_IP_ADDRESS}
+        ipv4_address: ${SEARXNG_IP}
 
 networks:
   local:
