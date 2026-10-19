@@ -1,14 +1,14 @@
 services:
-  valkey:
+  cache:
     image: docker.io/valkey/valkey:9-alpine
-    command: valkey-server --save 30 1 --loglevel warning
+    command: valkey-server --save 300 1 --save 60 1000 --loglevel warning
     container_name: searxng-valkey
     volumes:
       - ${SEARXNG_VALKEY_DATA_FOLDER:-./searxng-valkey_data}:/data
     restart: unless-stopped
     networks:
-      external:
-        ipv4_address: ${SEARXNG_VALKEY_IP_ADDRESS}
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.3
 
   searxng:
     image: searxng/searxng
@@ -18,18 +18,25 @@ services:
       - ${SEARXNG_DATA_FOLDER:-./data}:/var/cache/searxng
     environment:
       - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-false}
-      - SEARXNG_VALKEY_URL=${SEARXNG_VALKEY_URL:-false}
+      - SEARXNG_VALKEY_URL=valkey://cache:6379/0
       - SEARXNG_SECRET=${SEARXNG_SECRET}
       - SEARXNG_LIMITER=${SEARXNG_LIMITER:-false}
       - SEARXNG_IMAGE_PROXY=${SEARXNG_IMAGE_PROXY:-false}
     restart: unless-stopped
     depends_on:
-      - valkey
+      - cache
     networks:
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.2
       external:
         ipv4_address: ${SEARXNG_IP_ADDRESS}
 
 networks:
+  local:
+    name: searxng-local-network
+    ipam:
+      config:
+        - subnet: 172.${SUBNET_NUMBER:-20}.0.0/16
   external:
     external: true
     name: ${EXTERNAL_NETWORK_NAME}
