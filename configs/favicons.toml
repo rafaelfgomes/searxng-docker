@@ -1,0 +1,9 @@
+[favicons]
+cfg_schema = 1
+
+[favicons.cache]
+db_url = "/var/cache/searxng/faviconcache.db"
+LIMIT_TOTAL_BYTES = 104857600
+
+[favicons.proxy]
+max_age = 5184000

@@ -1,0 +1,14 @@
+use_default_settings: true
+
+server:
+  secret_key: ""
+  base_url: ""
+  image_proxy: ""
+
+redis:
+  url: valkey://cache:6379/0
+
+limiter:
+  key_max_retry: 10
+  request_limit: 100
+  window_size: 3600
