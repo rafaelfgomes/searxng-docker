@@ -6,13 +6,6 @@ services:
     volumes:
       - ${SEARXNG_VALKEY_DATA_FOLDER:-./searxng-valkey_data}:/data
     restart: unless-stopped
-    user: ${UID:-1000}:${GID:-1000}
-    cap_drop:
-      - ALL
-    cap_add:
-      - SETGID
-      - SETUID
-      - DAC_OVERRIDE
     logging:
       driver: "json-file"
       options:
@@ -26,7 +19,7 @@ services:
     image: searxng/searxng
     container_name: searxng-app
     volumes:
-      - ./configs:/etc/searxng
+      - ./configs:/etc/searxng:ro
       - ${SEARXNG_CACHE_FOLDER:-./data}:/var/cache/searxng
     environment:
       - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-false}
@@ -34,13 +27,6 @@ services:
       - SEARXNG_SECRET=${SEARXNG_SECRET}
       - SEARXNG_LIMITER=${SEARXNG_LIMITER:-false}
       - SEARXNG_IMAGE_PROXY=${SEARXNG_IMAGE_PROXY:-false}
-    user: ${UID:-1000}:${GID:-1000}
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-      - SETGID
-      - SETUID
     restart: unless-stopped
     depends_on:
       - cache
