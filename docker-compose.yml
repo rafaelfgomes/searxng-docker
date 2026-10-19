@@ -6,6 +6,7 @@ services:
     volumes:
       - ${SEARXNG_VALKEY_DATA_FOLDER:-./searxng-valkey_data}:/data
     restart: unless-stopped
+    user: ${UID:-1000}:${GID:-1000}
     cap_drop:
       - ALL
     cap_add:
@@ -33,6 +34,7 @@ services:
       - SEARXNG_SECRET=${SEARXNG_SECRET}
       - SEARXNG_LIMITER=${SEARXNG_LIMITER:-false}
       - SEARXNG_IMAGE_PROXY=${SEARXNG_IMAGE_PROXY:-false}
+    user: ${UID:-1000}:${GID:-1000}
     cap_drop:
       - ALL
     cap_add:
